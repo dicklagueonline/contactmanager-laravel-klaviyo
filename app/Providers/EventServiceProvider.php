@@ -5,17 +5,19 @@ namespace App\Providers;
 use App\Events\ContactChunkImportProcessed;
 use App\Events\ContactCreated;
 use App\Events\ContactDeleted;
-use Illuminate\Auth\Events\Registered;
 use App\Events\ContactImportFileDataLoaded;
+use App\Events\ContactsImported;
 use App\Events\ContactUpdated;
 use App\Events\UserUpdated;
 use App\Listeners\ContactChunkImportListener;
 use App\Listeners\ContactCreatedListener;
 use App\Listeners\ContactDeletedListener;
+use App\Listeners\ContactImportNotification;
 use App\Listeners\ContactUpdatedListener;
 use App\Listeners\NewUserRegistrationListener;
 use App\Listeners\ProcessImportContactListener;
 use App\Listeners\UserUpdatedListener;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
@@ -48,6 +50,9 @@ class EventServiceProvider extends ServiceProvider
         ],
         UserUpdated::class => [
             UserUpdatedListener::class
+        ],
+        ContactsImported::class => [
+            ContactImportNotification::class
         ]
     ];
 

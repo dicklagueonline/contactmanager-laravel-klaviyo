@@ -16,18 +16,28 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::group(['middleware' => 'auth'], function() {
+Route::group(['middleware' => 'auth'], function () {
 
-    Route::get('/', [App\Http\Controllers\ContactController::class, 'index'])->name('contact.index');
+    Route::get('/', 'ContactController@index')->name('user.contact.index');
 
-    Route::resource('contact', 'ContactController')->except(['index', 'show']);
+    Route::prefix('user')->group(function () {
+        Route::get('/trackme', 'TrackActivity@trackme')->name('user.trackme');
 
-    Route::prefix('import')->group(function() {
-        Route::get('/contact', [App\Http\Controllers\ContactImportController::class, 'index'])->name('contact.import');
-        Route::post('/contact/upload', [App\Http\Controllers\ContactImportController::class, 'loadFile'])->name('contact.import.upload');
-        Route::get('/contact/map/{import_file_data}', [App\Http\Controllers\ContactImportController::class, 'mapImportFields'])->name('contact.import.map');
-        Route::post('/contact/process', [App\Http\Controllers\ContactImportController::class, 'processImport'])->name('contact.import.process');
+        Route::get('/contact/lists', 'ContactController@list')->name('user.contact.lists');
+
+        Route::resource('contact', 'ContactController')
+            ->only(['store', 'update', 'destroy'])
+            ->names([
+                'store' => 'user.contact.store',
+                'update' => 'user.contact.update',
+                'destroy' => 'user.contact.destroy'
+            ]);
     });
 
-    Route::get('/user/trackme', [App\Http\Controllers\TrackActivity::class, 'trackme'])->name('user.trackme');
+    Route::prefix('import')->group(function () {
+        Route::post('/contact/upload', 'ImportContactController@loadFile')->name('import.cotact.loadfile');
+        Route::post('/contact/{importdata}/map', 'ImportContactController@mapColumn')->name('import.contact.mapping');
+        Route::post('/contact/{importdata}/process', 'ImportContactController@processImport')->name('import.contact.process');
+        Route::post('/contact/{importdata}/cancel', 'ImportContactController@cancelImport')->name('import.contact.cancel');
+    });
 });

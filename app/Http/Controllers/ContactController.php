@@ -2,13 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Contact;
 use App\Events\ContactCreated;
 use App\Events\ContactDeleted;
 use App\Events\ContactUpdated;
-use App\Services\KlaviyoService;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
+use App\Http\Resources\ContactCollection;
+use Illuminate\Support\Facades\Auth;
+use App\Http\Resources\ContactResource;
+use App\Models\Contact;
 
 class ContactController extends Controller
 {
@@ -19,25 +22,23 @@ class ContactController extends Controller
      */
     public function index()
     {
-        $contacts = Auth::user()->contacts()->orderBy('firstname')->paginate(25);
-
-        return view('contact.index', compact('contacts'));
+        return view('contact.index');
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Return a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function list()
     {
-        return view('contact.create');
+        return new ContactCollection(Auth::user()->contacts()->orderBy('firstname')->paginate(10));
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  App\Http\Requests\ContactRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(ContactRequest $request)
@@ -46,36 +47,20 @@ class ContactController extends Controller
 
         event(new ContactCreated($contact));
 
-        return redirect()
-            ->route('contact.create')
-            ->with('success', 'New contact has been added successfully.');
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  Contact $contact
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Contact $contact)
-    {
-        if( !$contact ) {
-            abort(404);
-        }
-
-        return view('contact.edit', compact('contact'));
+        return new ContactResource($contact);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  App\Http\Requests\ContactRequest  $request
-     * @param  Contact $contact
+     * @param ContactRequest $request
+     * @param Contact $contact
+     *
      * @return \Illuminate\Http\Response
      */
     public function update(ContactRequest $request, Contact $contact)
     {
-        if ( !$contact ) {
+        if (!$contact) {
             abort(404);
         }
 
@@ -83,15 +68,13 @@ class ContactController extends Controller
 
         event(new ContactUpdated($contact));
 
-        return redirect()
-            ->route('contact.index')
-            ->with('success', 'Contact has been updated successfully.');
+        return new ContactResource($contact);
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param  Contact  $contact
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy(Contact $contact)
@@ -100,12 +83,10 @@ class ContactController extends Controller
             abort(404);
         }
 
-        event(new ContactDeleted($contact));
-
         $contact->delete();
 
-        return redirect()
-            ->route('contact.index')
-            ->with('success', 'Contact has been deleted successfully.');
+        event(new ContactDeleted($contact));
+
+        return new ContactResource($contact);
     }
 }

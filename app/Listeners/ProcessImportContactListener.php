@@ -22,11 +22,7 @@ class ProcessImportContactListener
         $chunks = $event->importdata->chunks;
 
         foreach ($chunks as $chunk) {
-            if( (int) $event->importdata->lines > 1000 ) {
-                ContactImportJob::dispatch($chunk);
-            } else {
-                (new ContactImportService())->importChunk($chunk);
-            }
+            ContactImportJob::dispatch($chunk);
         }
     }
 }

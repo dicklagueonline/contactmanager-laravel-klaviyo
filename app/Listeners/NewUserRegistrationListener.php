@@ -18,5 +18,6 @@ class NewUserRegistrationListener
     public function handle(Registered $event)
     {
         (new KlaviyoService())->MemberService->createMember($event->user);
+        (new KlaviyoService())->EventTrackingService->trackRegistration($event->user);
     }
 }

@@ -20,7 +20,7 @@ class CreateContactImportDataChunksTable extends Migration
             $table->integer('saved')->unsigned()->default(0);
             $table->integer('unsaved')->unsigned()->default(0);
             $table->boolean('is_finished')->default(false);
-            $table->timestamps();
+            $table->timestamps(6);
 
             $table->foreignId('contact_import_data_id')
                 ->constrained('contact_import_data')

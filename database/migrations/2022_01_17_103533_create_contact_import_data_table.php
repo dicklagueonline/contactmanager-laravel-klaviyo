@@ -16,10 +16,14 @@ class CreateContactImportDataTable extends Migration
         Schema::create('contact_import_data', function (Blueprint $table) {
             $table->id();
             $table->string('filename');
-            $table->text('column_headers');
+            $table->string('file_type');
+            $table->string('file_extension');
+            $table->integer('file_size')->default(0);
+            $table->text('column_headers')->nullable();
+            $table->text('fields')->nullable();
             $table->text('field_maps')->nullable();
             $table->integer('lines')->unsigned()->default(0);
-            $table->timestamps();
+            $table->timestamps(6);
 
             $table->foreignId('user_id')
                 ->constrained('users')

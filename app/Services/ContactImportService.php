@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ContactImportDataChunk;
 use App\Events\ContactChunkImportProcessed;
+use App\Events\ContactsImported;
 
 class ContactImportService
 {
@@ -26,10 +27,20 @@ class ContactImportService
 
         $csv_data_chunks = array_chunk($import_data, 5000, true);
 
+        $contact_fields = [
+            'firstname' => 'Firstname',
+            'email' => 'Email Address',
+            'phone' => 'Phone Number'
+        ];
+
         $import_file_data = ContactImportData::create([
             'user_id' => Auth::user()->id,
             'filename' => $file->getClientOriginalName(),
+            'file_size' => $file->getSize(),
+            'file_type' => $file->getClientMimeType(),
+            'file_extension' => $file->getClientOriginalExtension(),
             'column_headers' => json_encode($import_column_headers),
+            'fields' => json_encode($contact_fields),
             'lines' => $lines
         ]);
 
@@ -63,7 +74,8 @@ class ContactImportService
         ], $data);
 
         // Delay event execution on mass import to delay http request on klaviyo api
-        time_nanosleep(0, 1000000);
+        // 0.1 seconds
+        time_nanosleep(0, 100000000);
 
         event(new ContactCreated($contact));
 
@@ -107,6 +119,8 @@ class ContactImportService
     {
         $chunks = $importdata->chunks()->where('is_finished', 0)->count();
 
+        $user = $importdata->user;
+
         if ($chunks === 0) {
             // get import status before deleting the import data
             $status = DB::table('contact_import_data_chunks')
@@ -124,7 +138,7 @@ class ContactImportService
             // delete the import data and all its chunks data
             $importdata->delete();
 
-            // todo: send notification to browser with dat on status
+            event(new ContactsImported($user, $importdata, $status));
         }
     }
 }

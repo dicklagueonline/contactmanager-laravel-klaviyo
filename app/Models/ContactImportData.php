@@ -19,7 +19,7 @@ class ContactImportData extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'filename', 'column_headers', 'field_maps', 'lines'
+        'user_id', 'filename', 'file_type', 'file_size', 'file_extension', 'column_headers', 'fields', 'field_maps', 'lines'
     ];
 
     public function user() {

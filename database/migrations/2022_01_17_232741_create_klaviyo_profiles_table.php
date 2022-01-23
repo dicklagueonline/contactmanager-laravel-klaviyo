@@ -19,7 +19,7 @@ class CreateKlaviyoProfilesTable extends Migration
             $table->string('person_id');
             $table->string('contact_list_id')->nullable();
 
-            $table->timestamps();
+            $table->timestamps(6);
 
             $table->foreignId('user_id')
                 ->nullable()
