@@ -2,17 +2,14 @@
 
 ## About
 
-Simple contact manager app built with laravel with the integration klaviyo api to tracked user activity and sync user contacts.
+Simple contact manager app built with laravel, with the integration of klaviyo api to tracked user activity and sync user contacts.
 
 ### Prerequisites
 
 Klaviyo Private/Public API keys - obtained by registering an account to klaviyo
 
--- Public Key
-KLAVIYO_PUBLIC_KEY=......
+KLAVIYO_PUBLIC_KEY - Klaviyo public api key
 
--- Private Key
-KLAVIYO_API_KEY=pk_..........................
+KLAVIYO_API_KEY - Klaviyo private api key
 
--- List ID - List id of the container where all new registered profile will be grouped
-KLAVIYO_MEMBER_LIST_ID=......
+KLAVIYO_MEMBER_LIST_ID - List id of the container where all new registered profile will be grouped
