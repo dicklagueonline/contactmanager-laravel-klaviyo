@@ -13,3 +13,21 @@ KLAVIYO_PUBLIC_KEY - Klaviyo public api key
 KLAVIYO_API_KEY - Klaviyo private api key
 
 KLAVIYO_MEMBER_LIST_ID - List id of the container where all new registered profile will be grouped
+
+### Getting Started
+
+$ git clone <https://github.com/dicklagueonline/contactmanager-laravel-klaviyo.git> contact
+
+$ cd contact
+
+$ compser install
+
+$ cp .env.example .env
+
+$ php artisan key:generate
+
+$ php artisan migrate
+
+$ php artisan queue:work
+
+$ php artisan serve
