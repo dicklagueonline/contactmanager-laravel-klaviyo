@@ -3,32 +3,33 @@
 namespace App\Services\Klaviyo;
 
 use App\Models\User;
+use Klaviyo\Klaviyo;
 use Klaviyo\Model\ProfileModel as KlaviyoProfile;
 
 class MemberService
 {
-    public function __construct($client)
+    public function __construct(Klaviyo $client)
     {
         $this->client = $client;
 
-        $this->member_list_id = config('services.klaviyo.member_list_id');
+        $this->memberListId = config('services.klaviyo.member_list_id');
     }
 
     public function createMember(User $user)
     {
-        $profile = new KlaviyoProfile(
-            [
-                '$id' => $user->id,
-                '$phone_number' => $user->phone,
-                '$email' => $user->email,
-                '$first_name' => $user->firstname,
-                '$last_name' => $user->lastname
-            ]
-        );
+        $profile = new KlaviyoProfile([
+            '$id' => $user->id,
+            '$phone_number' => $user->phone,
+            '$email' => $user->email,
+            '$first_name' => $user->firstname,
+            '$last_name' => $user->lastname
+        ]);
 
         $this->client->publicAPI->identify($profile, true);
 
-        $this->client->lists->addMembersToList($this->member_list_id, [$profile]);
+        if (!!$this->memberListId) {
+            $this->client->lists->addMembersToList($this->memberListId, [$profile]);
+        }
 
         $person = $this->client->profiles->getProfileIdByEmail($user->email);
 
@@ -43,6 +44,10 @@ class MemberService
 
     public function deleteMember(User $user)
     {
+        if (!$user->klaviyo) {
+            return;
+        }
+
         return $this->client->dataPrivacy->requestProfileDeletion($user->klaviyo->person_id, 'person_id');
     }
 
@@ -67,12 +72,21 @@ class MemberService
         return true;
     }
 
-    public function updateContactList(User $user) {
+    public function updateContactList(User $user)
+    {
+        if (!$user->klaviyo) {
+            return;
+        }
+
         return $this->client->lists->updateListNameById($user->klaviyo->contact_list_id, $user->fullname . ' Contacts');
     }
 
     public function deleteContactList(User $user)
     {
+        if( !$user->klaviyo ) {
+            return;
+        }
+
         return $this->client->lists->deleteList($user->klaviyo->contact_list_id);
     }
 }

@@ -3,12 +3,17 @@
 namespace App\Listeners;
 
 use App\Events\ContactDeleted;
-use App\Services\KlaviyoService;
+use App\Services\KlaviyoClient;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ContactDeletedListener
 {
+    public function __construct(KlaviyoClient $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * Handle the event.
      *
@@ -17,7 +22,6 @@ class ContactDeletedListener
      */
     public function handle(ContactDeleted $event)
     {
-        info("A contact is has been deleted.");
-        (new KlaviyoService())->ContactService->deleteContact($event->contact);
+        $this->client->ContactService->deleteContact($event->contact);
     }
 }

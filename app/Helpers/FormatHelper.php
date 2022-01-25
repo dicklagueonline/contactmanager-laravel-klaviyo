@@ -6,7 +6,9 @@ class FormatHelper
 {
     public static function bytesToSize($bytes)
     {
-        if (!!$bytes) {
+        $bytes = (int) $bytes;
+
+        if (!$bytes) {
             return '0 Bytes';
         }
 

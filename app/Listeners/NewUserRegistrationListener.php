@@ -2,13 +2,18 @@
 
 namespace App\Listeners;
 
-use App\Services\KlaviyoService;
+use App\Services\KlaviyoClient;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NewUserRegistrationListener
 {
+    public function __construct(KlaviyoClient $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * Handle the event.
      *
@@ -17,7 +22,7 @@ class NewUserRegistrationListener
      */
     public function handle(Registered $event)
     {
-        (new KlaviyoService())->MemberService->createMember($event->user);
-        (new KlaviyoService())->EventTrackingService->trackRegistration($event->user);
+        $this->client->MemberService->createMember($event->user);
+        $this->client->EventTrackingService->trackRegistration($event->user);
     }
 }

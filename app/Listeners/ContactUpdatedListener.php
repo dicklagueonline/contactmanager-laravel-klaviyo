@@ -3,12 +3,17 @@
 namespace App\Listeners;
 
 use App\Events\ContactUpdated;
-use App\Services\KlaviyoService;
+use App\Services\KlaviyoClient;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class ContactUpdatedListener
 {
+    public function __construct(KlaviyoClient $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * Handle the event.
      *
@@ -17,7 +22,6 @@ class ContactUpdatedListener
      */
     public function handle(ContactUpdated $event)
     {
-        info("A contact has been updated: " . $event->contact);
-        (new KlaviyoService())->ContactService->updateContact($event->contact);
+        $this->client->ContactService->updateContact($event->contact);
     }
 }

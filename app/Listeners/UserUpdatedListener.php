@@ -3,12 +3,17 @@
 namespace App\Listeners;
 
 use App\Events\UserUpdated;
-use App\Services\KlaviyoService;
-use Illuminate\Contracts\Queue\ShouldQueue;
+use App\Services\KlaviyoClient;
 use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Contracts\Queue\ShouldQueue;
 
 class UserUpdatedListener
 {
+    public function __construct(KlaviyoClient $client)
+    {
+        $this->client = $client;
+    }
+
     /**
      * Handle the event.
      *
@@ -17,6 +22,6 @@ class UserUpdatedListener
      */
     public function handle(UserUpdated $event)
     {
-        (new KlaviyoService())->MemberService->UpdateMember($event->user);
+        $this->client->MemberService->UpdateMember($event->user);
     }
 }

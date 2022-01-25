@@ -2,7 +2,6 @@
 
 namespace App\Listeners;
 
-use App\Services\ContactImportService;
 use Illuminate\Queue\InteractsWithQueue;
 use App\Events\ContactImportFileDataLoaded;
 use App\Jobs\ContactImportJob;

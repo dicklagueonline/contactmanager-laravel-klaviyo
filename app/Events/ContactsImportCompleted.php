@@ -3,16 +3,15 @@
 namespace App\Events;
 
 use App\Models\ContactImportData;
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
-use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Broadcasting\PrivateChannel;
+use Illuminate\Broadcasting\PresenceChannel;
+use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Broadcasting\InteractsWithSockets;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 
-class ContactsImported
+class ContactsImportCompleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -21,9 +20,8 @@ class ContactsImported
      *
      * @return void
      */
-    public function __construct(User $user, ContactImportData $importdata, $status = [])
+    public function __construct(ContactImportData $importdata, $status)
     {
-        $this->user = $user;
         $this->importdata = $importdata;
         $this->status = $status;
     }

@@ -2,16 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contact;
+use Illuminate\Http\Request;
 use App\Events\ContactCreated;
 use App\Events\ContactDeleted;
 use App\Events\ContactUpdated;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\ContactRequest;
-use App\Http\Resources\ContactCollection;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\ContactRequest;
 use App\Http\Resources\ContactResource;
-use App\Models\Contact;
+use App\Http\Resources\ContactCollection;
 
 class ContactController extends Controller
 {

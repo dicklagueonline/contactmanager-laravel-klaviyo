@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use App\Models\ContactImportDataChunk;
 use App\Events\ContactChunkImportProcessed;
-use App\Events\ContactsImported;
+use App\Events\ContactsImportCompleted;
 
 class ContactImportService
 {
@@ -55,6 +55,10 @@ class ContactImportService
 
     public function importRow(ContactImportData $importdata, $row)
     {
+        if( !$importdata ) {
+            return;
+        }
+
         $columns = json_decode($importdata->column_headers, true);
 
         $maps = json_decode($importdata->field_maps, true);
@@ -74,8 +78,8 @@ class ContactImportService
         ], $data);
 
         // Delay event execution on mass import to delay http request on klaviyo api
-        // 0.1 seconds
-        time_nanosleep(0, 100000000);
+        // 0.2 seconds
+        time_nanosleep(0, 200000000);
 
         event(new ContactCreated($contact));
 
@@ -84,6 +88,10 @@ class ContactImportService
 
     public function importChunk(ContactImportDataChunk $chunk)
     {
+        if( !$chunk ) {
+            return;
+        }
+
         $rows = json_decode($chunk->chunk_data, true);
 
         $processed = 0;
@@ -105,6 +113,10 @@ class ContactImportService
 
     public function updateChunkStatus(ContactImportDataChunk $chunk, $counter)
     {
+        if( !$chunk) {
+            return;
+        }
+
         $chunk->update([
             'is_finished' => true,
             'saved' => (int) $counter['saved'],
@@ -117,9 +129,11 @@ class ContactImportService
 
     public function checkImport(ContactImportData $importdata)
     {
-        $chunks = $importdata->chunks()->where('is_finished', 0)->count();
+        if(!$importdata) {
+            return;
+        }
 
-        $user = $importdata->user;
+        $chunks = $importdata->chunks()->where('is_finished', 0)->count();
 
         if ($chunks === 0) {
             // get import status before deleting the import data
@@ -138,7 +152,7 @@ class ContactImportService
             // delete the import data and all its chunks data
             $importdata->delete();
 
-            event(new ContactsImported($user, $importdata, $status));
+            event(new ContactsImportCompleted($importdata, $status));
         }
     }
 }

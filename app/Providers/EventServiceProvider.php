@@ -6,13 +6,13 @@ use App\Events\ContactChunkImportProcessed;
 use App\Events\ContactCreated;
 use App\Events\ContactDeleted;
 use App\Events\ContactImportFileDataLoaded;
-use App\Events\ContactsImported;
+use App\Events\ContactsImportCompleted;
 use App\Events\ContactUpdated;
 use App\Events\UserUpdated;
 use App\Listeners\ContactChunkImportListener;
 use App\Listeners\ContactCreatedListener;
 use App\Listeners\ContactDeletedListener;
-use App\Listeners\ContactImportNotification;
+use App\Listeners\SendContactImportCompletedEmailNotification;
 use App\Listeners\ContactUpdatedListener;
 use App\Listeners\NewUserRegistrationListener;
 use App\Listeners\ProcessImportContactListener;
@@ -51,8 +51,8 @@ class EventServiceProvider extends ServiceProvider
         UserUpdated::class => [
             UserUpdatedListener::class
         ],
-        ContactsImported::class => [
-            ContactImportNotification::class
+        ContactsImportCompleted::class => [
+            SendContactImportCompletedEmailNotification::class
         ]
     ];
 

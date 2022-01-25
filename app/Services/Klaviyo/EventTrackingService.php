@@ -4,11 +4,12 @@ namespace App\Services\Klaviyo;
 
 use Carbon\Carbon;
 use App\Models\User;
+use Klaviyo\Klaviyo;
 use Klaviyo\Model\EventModel as KlaviyoEvent;
 
 class EventTrackingService
 {
-    public function __construct($client)
+    public function __construct(Klaviyo $client)
     {
         $this->client = $client;
     }
@@ -35,20 +36,20 @@ class EventTrackingService
 
     public function trackRegistration(User $user)
     {
+        $datetime = Carbon::now();
 
-        $event = new KlaviyoEvent(
-            array(
-                'event' => 'Filled out Profile',
-                'customer_properties' => array(
-                    '$email' => $user->email,
-                    '$first_name' => $user->firstname,
-                    '$last_name' => $user->lastname
-                ),
-                'properties' => array(
-                    'Added Social Accounts' => False
-                )
-            )
-        );
+        $event = new KlaviyoEvent([
+            'event' => 'Filled out registration form',
+            'customer_properties' => [
+                '$email' => $user->email,
+                '$first_name' => $user->firstname,
+                '$last_name' => $user->lastname
+            ],
+            'properties' => [
+                'Date and Time' => $datetime->format('Y-m-d H:i:s')
+            ],
+            'time' => $datetime->timestamp
+        ]);
 
         $this->client->publicAPI->track($event, true);
     }

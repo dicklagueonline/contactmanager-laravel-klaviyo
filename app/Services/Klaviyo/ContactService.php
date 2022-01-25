@@ -4,11 +4,12 @@ namespace App\Services\Klaviyo;
 
 use App\Models\User;
 use App\Models\Contact;
+use Klaviyo\Klaviyo;
 use Klaviyo\Model\ProfileModel as KlaviyoProfile;
 
 class ContactService
 {
-    public function __construct($client)
+    public function __construct(Klaviyo $client)
     {
         $this->client = $client;
     }
