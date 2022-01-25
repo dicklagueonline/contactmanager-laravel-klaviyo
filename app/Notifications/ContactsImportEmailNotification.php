@@ -7,9 +7,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class ContactsImportEmailNotification extends Notification
+class ContactsImportEmailNotification extends Notification implements ShouldQueue
 {
     use Queueable;
+
+    protected $content;
 
     /**
      * Create a new notification instance.
